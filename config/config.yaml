@@ -1,0 +1,15 @@
+env: local
+
+app:
+  port: 8081
+  host: localhost
+
+
+database:
+  host: localhost
+  username: postgres
+  password: postgres
+  db_name: employees
+  port: 5432
+
+
