@@ -1,0 +1,11 @@
+.git
+.idea
+**/*.log
+node_modules
+build
+bin
+dist
+.env
+**/.DS_Store
+**/*.tmp
+
