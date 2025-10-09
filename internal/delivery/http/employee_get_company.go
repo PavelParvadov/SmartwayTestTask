@@ -7,8 +7,7 @@ import (
 )
 
 func (h *Handler) getEmployeesByCompany(c fiber.Ctx) error {
-	companyIDStr := c.Params("companyID")
-	companyID, err := strconv.Atoi(companyIDStr)
+	companyID, err := strconv.Atoi(c.Params("companyID"))
 	if err != nil {
 		return writeError(c, fiber.ErrBadRequest)
 	}
@@ -18,3 +17,4 @@ func (h *Handler) getEmployeesByCompany(c fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(employees)
 }
+

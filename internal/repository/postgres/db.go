@@ -9,10 +9,18 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func NewDB(ctx context.Context, host, user, password, dbname string, port int) (*sql.DB, error) {
+type DBConfig struct {
+	Host     string
+	Port     int
+	Username string
+	Password string
+	Name     string
+}
+
+func NewDB(ctx context.Context, cfg DBConfig) (*sql.DB, error) {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
-		host, user, password, dbname, port,
+		cfg.Host, cfg.Username, cfg.Password, cfg.Name, cfg.Port,
 	)
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {

@@ -1,57 +1,43 @@
 package logs
 
 import (
+	"os"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
-	"strings"
 )
-
-type Env string
 
 const (
-	EnvProduction  Env = "production"
-	EnvDevelopment Env = "development"
-	EnvLocal       Env = "local"
+	EnvProduction  = "production"
+	EnvDevelopment = "development"
+	EnvLocal       = "local"
 )
 
-func ParseEnv(s string) Env {
-	switch Env(strings.ToLower(strings.TrimSpace(s))) {
-	case EnvProduction:
-		return EnvProduction
-	case EnvDevelopment:
-		return EnvDevelopment
-	case EnvLocal:
-		return EnvLocal
-	default:
-		return EnvLocal
-	}
-}
-
-func GetNewLogger(envStr string) *zap.Logger {
-	env := ParseEnv(envStr)
-
-	var enc zapcore.Encoder
-	var lvl zapcore.Level
-	var stacktraceAt zapcore.Level
+func GetNewLogger(env string) *zap.Logger {
+	var logLevel zapcore.Level
 
 	switch env {
+	case EnvLocal:
+		logLevel = zapcore.DebugLevel
+	case EnvDevelopment:
+		logLevel = zapcore.DebugLevel
 	case EnvProduction:
-		cfg := zap.NewProductionEncoderConfig()
-		cfg.TimeKey = "time"
-		cfg.EncodeTime = zapcore.ISO8601TimeEncoder
-		enc = zapcore.NewJSONEncoder(cfg)
-		lvl = zapcore.InfoLevel
-		stacktraceAt = zapcore.ErrorLevel
-	case EnvDevelopment, EnvLocal:
-		cfg := zap.NewDevelopmentEncoderConfig()
-		cfg.TimeKey = "time"
-		cfg.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05")
-		enc = zapcore.NewConsoleEncoder(cfg)
-		lvl = zapcore.DebugLevel
-		stacktraceAt = zapcore.ErrorLevel
+		logLevel = zapcore.InfoLevel
+	default:
+		logLevel = zapcore.DebugLevel
 	}
 
-	core := zapcore.NewCore(enc, zapcore.AddSync(os.Stdout), lvl)
-	return zap.New(core, zap.AddCaller(), zap.AddStacktrace(stacktraceAt))
+	consoleEncoder := zapcore.NewConsoleEncoder(zapcore.EncoderConfig{
+		TimeKey:          "time",
+		LevelKey:         "level",
+		CallerKey:        "caller",
+		MessageKey:       "msg",
+		EncodeLevel:      zapcore.CapitalColorLevelEncoder,
+		EncodeTime:       zapcore.ISO8601TimeEncoder,
+		EncodeCaller:     zapcore.ShortCallerEncoder,
+		ConsoleSeparator: " | ",
+	})
+
+	core := zapcore.NewCore(consoleEncoder, zapcore.AddSync(os.Stdout), logLevel)
+	return zap.New(core, zap.AddCaller())
 }

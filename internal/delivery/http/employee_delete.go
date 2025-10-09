@@ -7,8 +7,7 @@ import (
 )
 
 func (h *Handler) deleteEmployee(c fiber.Ctx) error {
-	idStr := c.Params("id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return writeError(c, fiber.ErrBadRequest)
 	}
@@ -17,3 +16,4 @@ func (h *Handler) deleteEmployee(c fiber.Ctx) error {
 	}
 	return c.SendStatus(fiber.StatusNoContent)
 }
+

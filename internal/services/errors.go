@@ -8,4 +8,6 @@ var (
 	ErrSvcDepartmentNotFound = errors.New("department not found")
 	ErrSvcConflict           = errors.New("conflict")
 	ErrSvcInvalidInput       = errors.New("invalid input")
+	ErrSvcPassportExist      = errors.New("passport already exists")
+	ErrSvcPhoneExist         = errors.New("phone already exists")
 )

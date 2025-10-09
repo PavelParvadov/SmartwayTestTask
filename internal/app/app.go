@@ -20,7 +20,13 @@ func NewApp() *App {
 	cfg := config.GetConfig()
 	logger := logs.GetNewLogger(cfg.Env)
 
-	db, err := postgres.NewDB(context.Background(), cfg.DB.Host, cfg.DB.Username, cfg.DB.Password, cfg.DB.Name, cfg.DB.Port)
+	db, err := postgres.NewDB(context.Background(), postgres.DBConfig{
+		Host:     cfg.DB.Host,
+		Port:     cfg.DB.Port,
+		Username: cfg.DB.Username,
+		Password: cfg.DB.Password,
+		Name:     cfg.DB.Name,
+	})
 	if err != nil {
 		panic(err)
 	}

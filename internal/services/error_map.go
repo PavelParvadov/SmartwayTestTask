@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"fmt"
 
 	repo "github.com/pavelParvadov/SmartwayTask/internal/repository/postgres"
 )
@@ -10,13 +9,15 @@ import (
 func mapRepoErr(err error) error {
 	switch {
 	case errors.Is(err, repo.ErrCompanyNotFound):
-		return ErrSvcInvalidInput
+		return ErrSvcCompanyNotFound
 	case errors.Is(err, repo.ErrDepartmentNotFound):
-		return ErrSvcInvalidInput
+		return ErrSvcDepartmentNotFound
 	case errors.Is(err, repo.ErrEmployeeNotFound):
 		return ErrSvcEmployeeNotFound
-	case errors.Is(err, repo.ErrPassportExist), errors.Is(err, repo.ErrPhoneExist):
-		return fmt.Errorf("%w: %w", ErrSvcConflict, err)
+	case errors.Is(err, repo.ErrPassportExist):
+		return ErrSvcPassportExist
+	case errors.Is(err, repo.ErrPhoneExist):
+		return ErrSvcPhoneExist
 	default:
 		return err
 	}

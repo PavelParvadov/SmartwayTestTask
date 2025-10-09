@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"errors"
 
 	"go.uber.org/zap"
 
@@ -13,11 +12,11 @@ func (s *EmployeeService) GetEmployeeByDepartmentID(ctx context.Context, departm
 	employees, err := s.employeeProvider.GetEmployeeByDepartmentID(ctx, departmentID, companyID)
 	if err != nil {
 		mapped := mapRepoErr(err)
-		if mapped != nil && !errors.Is(mapped, err) {
-			s.log.Error(LogMsgMappedError, zap.String(LogFieldOperation, OpGetByDepartment))
+		if mapped != nil {
+			s.log.Error("get employees by department error", zap.Error(mapped))
 			return nil, mapped
 		}
-		s.log.Error(LogMsgGetByDepartmentFailed, zap.Error(err))
+		s.log.Error("get employees by department error", zap.Error(err))
 		return nil, err
 	}
 	return employees, nil

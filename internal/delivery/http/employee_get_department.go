@@ -7,13 +7,11 @@ import (
 )
 
 func (h *Handler) getEmployeeByDepartment(c fiber.Ctx) error {
-	companyIDStr := c.Params("companyID")
-	departmentIDStr := c.Params("departmentID")
-	companyID, err := strconv.Atoi(companyIDStr)
+	companyID, err := strconv.Atoi(c.Params("companyID"))
 	if err != nil {
 		return writeError(c, fiber.ErrBadRequest)
 	}
-	departmentID, err := strconv.Atoi(departmentIDStr)
+	departmentID, err := strconv.Atoi(c.Params("departmentID"))
 	if err != nil {
 		return writeError(c, fiber.ErrBadRequest)
 	}
