@@ -10,6 +10,17 @@ import (
 	"github.com/pavelParvadov/SmartwayTask/internal/repository/postgres/scripts"
 )
 
+// employeeData содержит все данные сотрудника для обновления
+type employeeData struct {
+	name           string
+	surname        string
+	phone          string
+	companyID      int
+	departmentID   int
+	passportType   string
+	passportNumber string
+}
+
 func (r *EmployeeRepositoryImpl) UpdateEmployee(ctx context.Context, req dto.UpdateEmployeeRequest) error {
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -26,41 +37,32 @@ func (r *EmployeeRepositoryImpl) UpdateEmployee(ctx context.Context, req dto.Upd
 		return err
 	}
 
-	var (
-		name          string
-		surname       string
-		phone         string
-		companyID     int
-		curPassType   string
-		curPassNumber string
-		depName       string
-		depPhone      string
-		departmentID  int
-	)
+	var empData employeeData
+	var depName, depPhone string
 
-	// получаем данные сотрудника на текщий момент
+	// получаем данные сотрудника на текущий момент
 	if err = tx.QueryRowContext(ctx, scripts.QueryFindEmployee, req.ID).Scan(
-		&name,
-		&surname,
-		&phone,
-		&companyID,
-		&curPassType,
-		&curPassNumber,
+		&empData.name,
+		&empData.surname,
+		&empData.phone,
+		&empData.companyID,
+		&empData.passportType,
+		&empData.passportNumber,
 		&depName,
 		&depPhone,
-		&departmentID,
+		&empData.departmentID,
 	); err != nil {
 		return err
 	}
 
 	if req.Name != "" {
-		name = req.Name
+		empData.name = req.Name
 	}
 	if req.Surname != "" {
-		surname = req.Surname
+		empData.surname = req.Surname
 	}
 	if req.Phone != "" {
-		phone = req.Phone
+		empData.phone = req.Phone
 	}
 	if req.CompanyID != 0 {
 		var exists bool
@@ -71,7 +73,7 @@ func (r *EmployeeRepositoryImpl) UpdateEmployee(ctx context.Context, req dto.Upd
 		if !exists {
 			return ErrCompanyNotFound
 		}
-		companyID = req.CompanyID
+		empData.companyID = req.CompanyID
 	}
 	if req.DepartmentID != 0 {
 		var exists bool
@@ -82,15 +84,15 @@ func (r *EmployeeRepositoryImpl) UpdateEmployee(ctx context.Context, req dto.Upd
 		if !exists {
 			return ErrDepartmentNotFound
 		}
-		departmentID = req.DepartmentID
+		empData.departmentID = req.DepartmentID
 	}
 
 	if req.PassportType != "" || req.PassportNumber != "" {
-		newType := curPassType
+		newType := empData.passportType
 		if req.PassportType != "" {
 			newType = req.PassportType
 		}
-		newNumber := curPassNumber
+		newNumber := empData.passportNumber
 		if req.PassportNumber != "" {
 			newNumber = req.PassportNumber
 		}
@@ -111,10 +113,10 @@ func (r *EmployeeRepositoryImpl) UpdateEmployee(ctx context.Context, req dto.Upd
 	}
 
 	// обновляем самого сотрудника
-	if _, err = tx.ExecContext(ctx, scripts.QueryUpdateEmployee, name, surname, phone, companyID, departmentID, req.ID); err != nil {
+	if _, err = tx.ExecContext(ctx, scripts.QueryUpdateEmployee,
+		empData.name, empData.surname, empData.phone, empData.companyID, empData.departmentID, req.ID); err != nil {
 		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && string(pqErr.Code) == "23505" {
-
+		if errors.As(err, &pqErr) && string(pqErr.Code) == UniqueViolationCode {
 			return ErrPhoneExist
 		}
 		return err
