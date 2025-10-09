@@ -4,34 +4,54 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
+	"strings"
 )
 
-func GetNewLogger(env string) *zap.Logger {
-	cfg := zapcore.NewConsoleEncoder(zapcore.EncoderConfig{
-		TimeKey:          "time",
-		LevelKey:         "level",
-		CallerKey:        "caller",
-		MessageKey:       "msg",
-		EncodeLevel:      zapcore.CapitalColorLevelEncoder,
-		EncodeTime:       zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05"),
-		EncodeCaller:     zapcore.ShortCallerEncoder,
-		ConsoleSeparator: " | ",
-	})
+type Env string
 
-	var logLevel zapcore.Level
+const (
+	EnvProduction  Env = "production"
+	EnvDevelopment Env = "development"
+	EnvLocal       Env = "local"
+)
+
+func ParseEnv(s string) Env {
+	switch Env(strings.ToLower(strings.TrimSpace(s))) {
+	case EnvProduction:
+		return EnvProduction
+	case EnvDevelopment:
+		return EnvDevelopment
+	case EnvLocal:
+		return EnvLocal
+	default:
+		return EnvLocal
+	}
+}
+
+func GetNewLogger(envStr string) *zap.Logger {
+	env := ParseEnv(envStr)
+
+	var enc zapcore.Encoder
+	var lvl zapcore.Level
+	var stacktraceAt zapcore.Level
 
 	switch env {
-	case "production":
-		logLevel = zap.InfoLevel
-	case "development":
-		logLevel = zap.DebugLevel
-	case "local":
-		logLevel = zap.DebugLevel
+	case EnvProduction:
+		cfg := zap.NewProductionEncoderConfig()
+		cfg.TimeKey = "time"
+		cfg.EncodeTime = zapcore.ISO8601TimeEncoder
+		enc = zapcore.NewJSONEncoder(cfg)
+		lvl = zapcore.InfoLevel
+		stacktraceAt = zapcore.ErrorLevel
+	case EnvDevelopment, EnvLocal:
+		cfg := zap.NewDevelopmentEncoderConfig()
+		cfg.TimeKey = "time"
+		cfg.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05")
+		enc = zapcore.NewConsoleEncoder(cfg)
+		lvl = zapcore.DebugLevel
+		stacktraceAt = zapcore.ErrorLevel
 	}
 
-	core := zapcore.NewCore(cfg, zapcore.AddSync(os.Stdout), logLevel)
-
-	logger := zap.New(core, zap.AddCaller())
-
-	return logger
+	core := zapcore.NewCore(enc, zapcore.AddSync(os.Stdout), lvl)
+	return zap.New(core, zap.AddCaller(), zap.AddStacktrace(stacktraceAt))
 }
