@@ -2,7 +2,7 @@ env: local
 
 app:
   port: 8081
-  host: localhost
+  host: 0.0.0.0
 
 
 database:

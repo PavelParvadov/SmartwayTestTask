@@ -15,7 +15,7 @@ type App struct {
 	host   string
 }
 
-func NewApp(port, host string, handlers ...*delivery.Handler) *App {
+func NewApp(port, host string, handler *delivery.Handler) *App {
 	router := fiber.New(fiber.Config{
 		ServerHeader: "Fiber",
 		ReadTimeout:  5 * time.Second,
@@ -23,9 +23,7 @@ func NewApp(port, host string, handlers ...*delivery.Handler) *App {
 	})
 	router.Use(logger.New(), cors.New())
 
-	for _, h := range handlers {
-		h.Register(router)
-	}
+	handler.Register(router)
 
 	return &App{router: router, port: port, host: host}
 }
