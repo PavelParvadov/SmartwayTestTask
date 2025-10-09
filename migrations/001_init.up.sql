@@ -27,13 +27,11 @@ CREATE TABLE IF NOT EXISTS employees (
     passport_id INT UNIQUE REFERENCES passports(id) ON DELETE SET NULL
 );
 
--- helpful indexes
 CREATE INDEX IF NOT EXISTS idx_employees_company_id ON employees(company_id);
 CREATE INDEX IF NOT EXISTS idx_employees_department_id ON employees(department_id);
 CREATE INDEX IF NOT EXISTS idx_passports_type_number ON passports(type, number);
 CREATE INDEX IF NOT EXISTS idx_employees_passport_id ON employees(passport_id);
 
--- seed data (optional)
 INSERT INTO companies (name) VALUES
      ('Smartway'),
      ('T-bank');
