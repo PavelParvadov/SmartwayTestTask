@@ -1,4 +1,7 @@
-DROP TABLE IF EXISTS companies;
+DROP TABLE IF EXISTS employees;
 DROP TABLE IF EXISTS passports;
 DROP TABLE IF EXISTS departments;
-DROP TABLE IF EXISTS employees;
+DROP TABLE IF EXISTS companies;
+
+
+
