@@ -11,9 +11,22 @@ func (h *Handler) createEmployee(c fiber.Ctx) error {
 	if err := c.Bind().Body(&req); err != nil {
 		return writeError(c, fiber.ErrBadRequest)
 	}
+	if !h.validateCreateEmployeeRequest(req) {
+		return writeError(c, fiber.ErrBadRequest)
+	}
 	id, err := h.employeeService.SaveEmployee(c.Context(), req)
 	if err != nil {
 		return writeError(c, err)
 	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"id": id})
+}
+
+func (h *Handler) validateCreateEmployeeRequest(req models.Employee) bool {
+	return req.Name != "" &&
+		req.Surname != "" &&
+		req.Phone != "" &&
+		req.CompanyId > 0 &&
+		req.DepartmentId > 0 &&
+		req.Passport.Type != "" &&
+		req.Passport.Number != ""
 }
