@@ -1,1 +1,0 @@
-SELECT EXISTS(SELECT 1 FROM passports where type = $1 AND number = $2)
