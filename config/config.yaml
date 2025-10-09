@@ -9,7 +9,7 @@ database:
   host: localhost
   username: postgres
   password: postgres
-  db_name: employees
+  db_name: smartway_employees
   port: 5432
 
 
