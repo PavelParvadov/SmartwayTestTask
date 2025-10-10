@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
@@ -22,7 +23,7 @@ func NewApp(port, host string, handler *delivery.Handler) *App {
 		WriteTimeout: 5 * time.Second,
 	})
 	router.Use(logger.New(), cors.New())
-
+	handler.RegisterSwagger(router)
 	handler.Register(router)
 
 	return &App{router: router, port: port, host: host}
@@ -35,7 +36,7 @@ func (a *App) MustRun() {
 }
 
 func (a *App) Run() error {
-	if err := a.router.Listen(a.host + ":" + a.port); err != nil {
+	if err := a.router.Listen(fmt.Sprintf("%s:%s", a.host, a.port)); err != nil {
 		return err
 	}
 	return nil
