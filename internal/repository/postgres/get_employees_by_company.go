@@ -11,16 +11,16 @@ func (r *EmployeeRepositoryImpl) GetEmployeesByCompanyID(ctx context.Context, co
 	var exists bool
 	// проверяем существует ли компания
 	if err := r.db.QueryRowContext(ctx, scripts.IsCompanyExists, companyId).Scan(&exists); err != nil {
-		return nil, err
+		return []models.Employee{}, err
 	}
 	if !exists {
-		return []models.Employee{}, nil
+		return []models.Employee{}, ErrCompanyNotFound
 	}
 
 	// получаем сотрудников компании
 	rows, err := r.db.QueryContext(ctx, scripts.QueryGetEmployeesByCompany, companyId)
 	if err != nil {
-		return nil, err
+		return []models.Employee{}, err
 	}
 	defer rows.Close()
 

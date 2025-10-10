@@ -25,7 +25,7 @@ func (h *Handler) createEmployee(c fiber.Ctx) error {
 	}
 
 	if !h.validateCreateEmployeeRequest(req) {
-		return writeError(c, fiber.ErrBadRequest)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "validation error"})
 	}
 
 	id, err := h.employeeService.SaveEmployee(c.Context(), req)
@@ -39,12 +39,9 @@ func (h *Handler) createEmployee(c fiber.Ctx) error {
 func (h *Handler) validateCreateEmployeeRequest(req models.Employee) bool {
 	return req.Name != "" &&
 		req.Surname != "" &&
-		req.Phone != "" &&
+		req.Phone != "" && len(req.Phone) <= 20 &&
 		req.CompanyId > 0 &&
 		req.DepartmentId > 0 &&
-		req.Passport.Type != "" &&
-		req.Passport.Number != "" &&
-		len(req.Phone) <= 20 &&
-		len(req.Passport.Type) <= 15 &&
-		len(req.Passport.Number) <= 15
+		req.Passport.Type != "" && len(req.Passport.Type) <= 15 &&
+		req.Passport.Number != "" && len(req.Passport.Number) <= 15
 }

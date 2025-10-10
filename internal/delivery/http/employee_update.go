@@ -34,7 +34,7 @@ func (h *Handler) updateEmployee(c fiber.Ctx) error {
 	}
 
 	if !h.validateUpdateEmployeeRequest(req) {
-		return writeError(c, fiber.ErrBadRequest)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "validation error"})
 	}
 
 	req.ID = id
@@ -45,17 +45,8 @@ func (h *Handler) updateEmployee(c fiber.Ctx) error {
 }
 
 func (h *Handler) validateUpdateEmployeeRequest(req dto.UpdateEmployeeRequest) bool {
-	if req.Phone != "" && len(req.Phone) > 20 {
-		return false
-	}
-	if req.PassportType != "" && len(req.PassportType) > 15 {
-		return false
-	}
-	if req.PassportNumber != "" && len(req.PassportNumber) > 15 {
-		return false
-	}
-	if req.DepartmentID < 0 || req.CompanyID < 0 {
-		return false
-	}
-	return true
+	return (req.Phone == "" || len(req.Phone) <= 20) &&
+		(req.PassportType == "" || len(req.PassportType) <= 15) &&
+		(req.PassportNumber == "" || len(req.PassportNumber) <= 15) &&
+		req.DepartmentID > 0 && req.CompanyID > 0
 }

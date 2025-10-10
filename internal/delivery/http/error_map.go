@@ -9,8 +9,6 @@ import (
 
 func writeError(c fiber.Ctx, err error) error {
 	switch {
-	case errors.Is(err, fiber.ErrBadRequest):
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	case errors.Is(err, svc.ErrSvcEmployeeNotFound),
 		errors.Is(err, svc.ErrSvcCompanyNotFound),
 		errors.Is(err, svc.ErrSvcDepartmentNotFound):

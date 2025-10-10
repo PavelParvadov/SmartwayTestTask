@@ -11,16 +11,16 @@ func (r *EmployeeRepositoryImpl) GetEmployeeByDepartmentID(ctx context.Context, 
 	var exists bool
 	// проверяем принадлежит ли отдел компании
 	if err := r.db.QueryRowContext(ctx, scripts.QueryFindDepartmentByCompany, DepartmentId, CompanyId).Scan(&exists); err != nil {
-		return nil, err
+		return []models.Employee{}, err
 	}
 	if !exists {
-		return []models.Employee{}, nil
+		return []models.Employee{}, ErrDepartmentNotFound
 	}
 
 	// получаем сотрудников отдела внутри компании
 	rows, err := r.db.QueryContext(ctx, scripts.QueryGetEmployeesByDepartment, DepartmentId, CompanyId)
 	if err != nil {
-		return nil, err
+		return []models.Employee{}, err
 	}
 	defer rows.Close()
 
@@ -39,7 +39,7 @@ func (r *EmployeeRepositoryImpl) GetEmployeeByDepartmentID(ctx context.Context, 
 			&e.Department.Name,
 			&e.Department.Phone,
 		); err != nil {
-			return nil, err
+			return []models.Employee{}, err
 		}
 		employees = append(employees, e)
 	}
