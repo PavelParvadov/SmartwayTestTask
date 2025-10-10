@@ -14,10 +14,11 @@ func (s *EmployeeService) GetEmployeeByDepartmentID(ctx context.Context, departm
 		mapped := mapRepoErr(err)
 		if mapped != nil {
 			s.log.Error("get employees by department error", zap.Error(mapped))
-			return nil, mapped
+			return []models.Employee{}, mapped
 		}
+
 		s.log.Error("get employees by department error", zap.Error(err))
-		return nil, err
+		return []models.Employee{}, err
 	}
 	return employees, nil
 }

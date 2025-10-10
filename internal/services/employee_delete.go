@@ -13,6 +13,7 @@ func (s *EmployeeService) DeleteEmployee(ctx context.Context, id int) error {
 			s.log.Error("delete employee error", zap.Error(mapped))
 			return mapped
 		}
+
 		s.log.Error("delete employee error", zap.Error(err))
 		return err
 	}

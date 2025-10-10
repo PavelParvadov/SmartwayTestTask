@@ -15,6 +15,7 @@ func (s *EmployeeService) UpdateEmployee(ctx context.Context, req dto.UpdateEmpl
 			s.log.Error("update employee error", zap.Error(mapped))
 			return mapped
 		}
+
 		s.log.Error("update employee error", zap.Error(err))
 		return err
 	}

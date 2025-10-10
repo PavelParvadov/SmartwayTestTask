@@ -16,6 +16,7 @@ func (s *EmployeeService) SaveEmployee(ctx context.Context, employee models.Empl
 			s.log.Error("save employee error", zap.Error(mapped))
 			return 0, mapped
 		}
+
 		s.log.Error("save employee error", zap.Error(err))
 		return 0, err
 	}
