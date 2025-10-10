@@ -1,0 +1,260 @@
+basePath: /
+definitions:
+  dto.UpdateEmployeeRequest:
+    properties:
+      company_id:
+        type: integer
+      department_id:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      passport_number:
+        type: string
+      passport_type:
+        type: string
+      phone:
+        type: string
+      surname:
+        type: string
+    type: object
+  models.Department:
+    properties:
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  models.Employee:
+    properties:
+      company_id:
+        type: integer
+      department:
+        $ref: '#/definitions/models.Department'
+      department_id:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      passport:
+        $ref: '#/definitions/models.Passport'
+      phone:
+        type: string
+      surname:
+        type: string
+    type: object
+  models.Passport:
+    properties:
+      number:
+        type: string
+      type:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: API for managing employees
+  title: Employee Service API
+  version: "1.0"
+paths:
+  /employees:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new employee with passport information
+      parameters:
+      - description: Employee data
+        in: body
+        name: employee
+        required: true
+        schema:
+          $ref: '#/definitions/models.Employee'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Employee created successfully
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "400":
+          description: Bad request - validation error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict - employee with this phone or passport already exists
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new employee
+      tags:
+      - employees
+  /employees/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an employee by ID
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Employee deleted successfully
+        "404":
+          description: Employee not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete an employee
+      tags:
+      - employees
+    patch:
+      consumes:
+      - application/json
+      description: Updates an existing employee
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Employee update data
+        in: body
+        name: employee
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateEmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Employee updated successfully
+        "400":
+          description: Bad request - validation error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Employee not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict - employee with this phone or passport already exists
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an employee
+      tags:
+      - employees
+  /employees/company/{companyID}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all employees for a specific company
+      parameters:
+      - description: Company ID
+        in: path
+        name: companyID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of employees
+          schema:
+            items:
+              $ref: '#/definitions/models.Employee'
+            type: array
+        "404":
+          description: Company not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get employees by company
+      tags:
+      - employees
+  /employees/company/{companyID}/department/{departmentID}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all employees for a specific company and department
+      parameters:
+      - description: Company ID
+        in: path
+        name: companyID
+        required: true
+        type: integer
+      - description: Department ID
+        in: path
+        name: departmentID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of employees
+          schema:
+            items:
+              $ref: '#/definitions/models.Employee'
+            type: array
+        "404":
+          description: Company or department not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get employees by company and department
+      tags:
+      - employees
+schemes:
+- http
+swagger: "2.0"

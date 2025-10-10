@@ -24,11 +24,13 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("failed to create migration instance: %s", err))
 	}
+
 	if err = migr.Up(); err != nil {
 		if errors.Is(err, migrate.ErrNoChange) {
 			fmt.Println("no migrations to apply")
 			return
 		}
+
 		panic(fmt.Errorf("migration failed: %w", err))
 	}
 
