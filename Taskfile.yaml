@@ -14,3 +14,7 @@ tasks:
           - go run cmd/employee-service/main.go --config={{.CONFIG_PATH}}
     vars:
           CONFIG_PATH: "config/config.yaml"
+  swagger:
+    desc: "generate swagger documentation"
+    cmds:
+      - swag init -g cmd/employee-service/main.go
