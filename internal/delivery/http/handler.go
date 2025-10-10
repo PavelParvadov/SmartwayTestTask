@@ -2,6 +2,8 @@ package http
 
 import (
 	"context"
+	"github.com/gofiber/fiber/v3/middleware/adaptor"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/pavelParvadov/SmartwayTask/internal/domain/dto"
@@ -31,4 +33,12 @@ func (h *Handler) Register(api fiber.Router) {
 	g.Get("/company/:companyID", h.getEmployeesByCompany)
 	g.Patch("/:id", h.updateEmployee)
 	g.Delete("/:id", h.deleteEmployee)
+}
+
+func SetupSwagger(router fiber.Router) {
+	router.Get("/swagger/*", adaptor.HTTPHandler(httpSwagger.WrapHandler))
+}
+
+func (h *Handler) RegisterSwagger(router fiber.Router) {
+	SetupSwagger(router)
 }
