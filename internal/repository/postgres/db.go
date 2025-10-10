@@ -4,28 +4,23 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/pavelParvadov/SmartwayTask/internal/config"
 	"time"
 
 	_ "github.com/lib/pq"
 )
 
-type DBConfig struct {
-	Host     string
-	Port     int
-	Username string
-	Password string
-	Name     string
-}
-
-func NewDB(ctx context.Context, cfg DBConfig) (*sql.DB, error) {
+func NewDB(ctx context.Context, cfg *config.DB) (*sql.DB, error) {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
 		cfg.Host, cfg.Username, cfg.Password, cfg.Name, cfg.Port,
 	)
 	db, err := sql.Open("postgres", dsn)
+
 	if err != nil {
 		return nil, err
 	}
+
 	pingCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 	if err = db.PingContext(pingCtx); err != nil {

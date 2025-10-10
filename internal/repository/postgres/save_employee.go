@@ -37,7 +37,7 @@ func (r *EmployeeRepositoryImpl) SaveEmployee(ctx context.Context, employee mode
 	// создаём паспорт и получаем его id
 	if err = tx.QueryRowContext(ctx, scripts.InsertPassport, employee.Passport.Type, employee.Passport.Number).Scan(&passportID); err != nil {
 		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && string(pqErr.Code) == "23505" {
+		if errors.As(err, &pqErr) && string(pqErr.Code) == UniqueViolationCode {
 			return 0, ErrPassportExist
 		}
 		return 0, err
