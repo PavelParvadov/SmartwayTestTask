@@ -14,8 +14,8 @@ import (
 // @Produce json
 // @Param id path int true "Employee ID"
 // @Success 204 "Employee deleted successfully"
-// @Failure 404 {object} map[string]string "Employee not found"
-// @Failure 500 {object} map[string]string "Internal server error"
+// @Failure 404 {string} string "Employee not found"
+// @Failure 500 {string} string "Internal server error"
 // @Router /employees/{id} [delete]
 func (h *Handler) deleteEmployee(c fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))

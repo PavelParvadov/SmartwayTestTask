@@ -13,10 +13,11 @@ import (
 // @Accept json
 // @Produce json
 // @Param employee body models.Employee true "Employee data"
-// @Success 201 {object} map[string]int "Employee created successfully"
-// @Failure 400 {object} map[string]string "Bad request - validation error"
-// @Failure 409 {object} map[string]string "Conflict - employee with this phone or passport already exists"
-// @Failure 500 {object} map[string]string "Internal server error"
+// @Success 201 {object} object "Employee created successfully"
+// @Failure 400 {string} string "Bad request - validation error"
+// @Failure 404 {string} string "Company or department not found"
+// @Failure 409 {string} string "Conflict - employee with this phone or passport already exists"
+// @Failure 500 {string} string "Internal server error"
 // @Router /employees [post]
 func (h *Handler) createEmployee(c fiber.Ctx) error {
 	var req models.Employee

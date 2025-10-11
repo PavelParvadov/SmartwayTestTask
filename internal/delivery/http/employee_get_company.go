@@ -14,8 +14,8 @@ import (
 // @Produce json
 // @Param companyID path int true "Company ID"
 // @Success 200 {array} models.Employee "List of employees"
-// @Failure 404 {object} map[string]string "Company not found"
-// @Failure 500 {object} map[string]string "Internal server error"
+// @Failure 404 {string} string "Company not found"
+// @Failure 500 {string} string "Internal server error"
 // @Router /employees/company/{companyID} [get]
 func (h *Handler) getEmployeesByCompany(c fiber.Ctx) error {
 	companyID, err := strconv.Atoi(c.Params("companyID"))

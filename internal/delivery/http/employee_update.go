@@ -17,10 +17,10 @@ import (
 // @Param id path int true "Employee ID"
 // @Param employee body dto.UpdateEmployeeRequest true "Employee update data"
 // @Success 204 "Employee updated successfully"
-// @Failure 400 {object} map[string]string "Bad request - validation error"
-// @Failure 404 {object} map[string]string "Employee not found"
-// @Failure 409 {object} map[string]string "Conflict - employee with this phone or passport already exists"
-// @Failure 500 {object} map[string]string "Internal server error"
+// @Failure 400 {string} string "Bad request - validation error"
+// @Failure 404 {string} string "Employee not found"
+// @Failure 409 {string} string "Conflict - employee with this phone or passport already exists"
+// @Failure 500 {string} string "Internal server error"
 // @Router /employees/{id} [patch]
 func (h *Handler) updateEmployee(c fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))

@@ -7,19 +7,15 @@
 package main
 
 import (
-	_ "github.com/pavelParvadov/SmartwayTask/docs"
-	"github.com/pavelParvadov/SmartwayTask/internal/app"
-	"github.com/pavelParvadov/SmartwayTask/internal/config"
-	"github.com/pavelParvadov/SmartwayTask/pkg/logs"
 	"os"
 	"os/signal"
 	"syscall"
+
+	_ "github.com/pavelParvadov/SmartwayTask/docs"
+	"github.com/pavelParvadov/SmartwayTask/internal/app"
 )
 
 func main() {
-	cfg := config.GetConfig()
-	log := logs.GetNewLogger(cfg.Env)
-
 	application := app.NewApp()
 	go application.HTTPServer.MustRun()
 
@@ -29,5 +25,5 @@ func main() {
 	<-stop
 
 	application.HTTPServer.Stop()
-	log.Info("application stopped")
+	application.Logger.Info("application stopped")
 }

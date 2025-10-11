@@ -15,8 +15,8 @@ import (
 // @Param companyID path int true "Company ID"
 // @Param departmentID path int true "Department ID"
 // @Success 200 {array} models.Employee "List of employees"
-// @Failure 404 {object} map[string]string "Company or department not found"
-// @Failure 500 {object} map[string]string "Internal server error"
+// @Failure 404 {string} string "Company or department not found"
+// @Failure 500 {string} string "Internal server error"
 // @Router /employees/company/{companyID}/department/{departmentID} [get]
 func (h *Handler) getEmployeeByDepartment(c fiber.Ctx) error {
 	companyID, err := strconv.Atoi(c.Params("companyID"))

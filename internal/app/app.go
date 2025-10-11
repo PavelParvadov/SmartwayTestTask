@@ -10,10 +10,12 @@ import (
 	"github.com/pavelParvadov/SmartwayTask/internal/repository/postgres"
 	"github.com/pavelParvadov/SmartwayTask/internal/services"
 	"github.com/pavelParvadov/SmartwayTask/pkg/logs"
+	"go.uber.org/zap"
 )
 
 type App struct {
 	HTTPServer *httpapp.App
+	Logger     *zap.Logger
 }
 
 func NewApp() *App {
@@ -37,5 +39,5 @@ func NewApp() *App {
 		handler,
 	)
 
-	return &App{HTTPServer: httpSrv}
+	return &App{HTTPServer: httpSrv, Logger: logger}
 }
